@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# using ssh command as ProxyCommand enables
+# user to utilize host aliases from `.ssh/config`
+
+## example
+#  ssh_proxy <east|west|china> <host> "[<command>]"
+
+
+export GW=$1
+export TARGET=$2
+export PSEUDOCMD=$3
+
+ssh -o \
+  ProxyCommand="ssh -W %h:%p ${GW}" ${TARGET} ${PSEUDOCMD} 

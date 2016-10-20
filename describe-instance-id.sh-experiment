@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+
+usage() {
+     echo "Script takes AWS instance-id as a parameter: \
+$0 <instance-id> [<region>] [Only Return Private IP <Boolean>]"
+}
+
+if [[ -z $1 ]]; then
+	usage && exit 1
+fi
+
+export IID=$1
+export _REGION=$2
+export RPIB=${3:-False}
+
+
+if [[ ${RPIB} == "True" ]]; then
+  FILTER="| jq -r '.PrivateIpAddress'"
+  else
+  FILTER=""
+fi
+
+
+    aws --region ${_REGION:-us-east-1}\
+	    ec2 describe-instances  \
+    | jq --arg instanceid "${IID}"  -r '.Reservations[].Instances[] | select ( .InstanceId == $instanceid )' ${FILTER}
+
+exit $?
