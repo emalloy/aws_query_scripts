@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -x
 
 
 usage() {
@@ -15,8 +16,9 @@ REGION=$2
 PROFILE=$3
 
     aws --region ${REGION:-us-east-1}\
-	    --profile ${PROFILE:-default} \
 	    ec2 describe-instances  \
-    | jq --arg instanceid "${IID}"  -r '.Reservations[].Instances[] | select ( .InstanceId == $instanceid )'
+    | jq --arg instanceid "${IID}" \
+    -r '.Reservations[].Instances[]
+    | select ( .InstanceId == $instanceid )'
 
 exit $?
