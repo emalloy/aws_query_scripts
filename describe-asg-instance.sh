@@ -21,12 +21,14 @@ aws --region ${REGION:-us-east-1}\
 
 export INSTANCEID=$(cat /tmp/iid.txt)
 
-aws --region ${REGION:-us-east-1} \
-    ec2 describe-instances \
-    | jq --arg instanceid "${INSTANCEID}" \
-    -r '.Reservations[].Instances[] 
-    | select ( .InstanceId == $instanceid )
-    | .PublicIpAddress'
-
+for y in $INSTANCEID; do
+  aws --region ${REGION:-us-east-1} \
+      ec2 describe-instances \
+      | jq --arg instanceid "${INSTANCEID}" \
+      -r '.Reservations[].Instances[] 
+      | select ( .InstanceId == $instanceid )
+      | .PublicIpAddress'
+done
+  
 
 exit $?
